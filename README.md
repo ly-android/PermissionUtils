@@ -9,10 +9,30 @@ allprojects {
 	}
 ```
 2. Add the dependency
+
 ```gradle
 dependencies {
 	        implementation 'com.github.ly-android:PermissionUtils:1.0.0'
 	}
+```
+3. user PermisstionUtils
+
+```java
+if (PermissionUtils.hasPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+      Toast.makeText(this, "有权限！", Toast.LENGTH_SHORT).show();
+    }
+    findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        try {
+          PermissionUtils.toPermissionSetting(MainActivity.this);
+        } catch (NoSuchFieldException e) {
+          e.printStackTrace();
+        } catch (IllegalAccessException e) {
+          e.printStackTrace();
+        }
+      }
+    });
 ```
 ## android 跳转到权限设置界面
 >我们知道在6.0之后，android的一些权限需要动态获取，网上很多封装好的动态获取权限框架，如[RxPermisstion](https://github.com/tbruyelle/RxPermissions),[PermissionsDispatcher](https://github.com/permissions-dispatcher/PermissionsDispatcher),[easypermissions](https://github.com/googlesamples/easypermissions) 
