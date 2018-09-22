@@ -12,7 +12,7 @@ allprojects {
 
 ```gradle
 dependencies {
-	        implementation 'com.github.ly-android:PermissionUtils:1.0.0'
+	        implementation 'com.github.ly-android:PermissionUtils:1.0.1'
 	}
 ```
 3. user PermisstionUtils
