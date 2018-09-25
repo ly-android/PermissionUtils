@@ -14,6 +14,8 @@ import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.allen.android.lib.BuildConfig;
+
 import java.lang.reflect.Method;
 
 public class HuaweiUtils {
@@ -78,6 +80,16 @@ public class HuaweiUtils {
             Toast.makeText(context, "进入设置页面失败，请手动设置", Toast.LENGTH_LONG).show();
             Log.e(TAG, Log.getStackTraceString(e));
         }
+    }
+
+    //com.android.packageinstaller/.permission.ui.ManagePermissionsActivity
+    public static void toPermisstionSetting(Context context) {
+        Intent intent = new Intent();
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setAction("android.intent.action.MANAGE_APP_PERMISSIONS");
+        ComponentName comp = new ComponentName("com.android.packageinstaller", "com.android.packageinstaller.permission.ui.ManagePermissionsActivity");
+        intent.setComponent(comp);
+        context.startActivity(intent);
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)

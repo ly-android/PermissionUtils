@@ -70,7 +70,7 @@ public class PermissionUtils {
     for (String permission : permissions) {
       String op = AppOpsManagerCompat.permissionToOp(permission);
       if (TextUtils.isEmpty(op)) continue;
-      int result = AppOpsManagerCompat.noteProxyOp(context, op, context.getPackageName());
+      int result = AppOpsManagerCompat.noteOp(context, op, android.os.Process.myUid(), context.getPackageName());
       if (result == AppOpsManagerCompat.MODE_IGNORED) return false;
       result = ContextCompat.checkSelfPermission(context, permission);
       if (result != PackageManager.PERMISSION_GRANTED) return false;
@@ -95,13 +95,18 @@ public class PermissionUtils {
         QikuUtils.applyPermission(context);
       } else if (RomUtils.checkIsOppoRom()) {
         OppoUtils.applyOppoPermission(context);
+      } else {
+        RomUtils.getAppDetailSettingIntent(context);
       }
-    }
-    if (RomUtils.checkIsMeizuRom()) {
-      MeizuUtils.applyPermission(context);
     } else {
-      if (Build.VERSION.SDK_INT >= 23) {
-        RomUtils.commonROMPermissionApplyInternal(context);
+      if (RomUtils.checkIsMeizuRom()) {
+        MeizuUtils.applyPermission(context);
+      } else {
+        if (RomUtils.checkIsOppoRom() || RomUtils.checkIsVivoRom() || RomUtils.checkIsHuaweiRom())
+          RomUtils.getAppDetailSettingIntent(context);
+        else {
+          RomUtils.commonROMPermissionApplyInternal(context);
+        }
       }
     }
   }
