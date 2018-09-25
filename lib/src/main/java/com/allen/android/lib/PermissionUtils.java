@@ -67,6 +67,9 @@ public class PermissionUtils {
    */
   public static boolean hasPermission(@NonNull Context context, @NonNull List<String> permissions) {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return true;
+    if (RomUtils.checkIsMiuiRom()) {
+      return RomUtils.hasMiuiPermission(context);
+    }
     for (String permission : permissions) {
       String op = AppOpsManagerCompat.permissionToOp(permission);
       if (TextUtils.isEmpty(op)) continue;
@@ -102,9 +105,12 @@ public class PermissionUtils {
       if (RomUtils.checkIsMeizuRom()) {
         MeizuUtils.applyPermission(context);
       } else {
-        if (RomUtils.checkIsOppoRom() || RomUtils.checkIsVivoRom() || RomUtils.checkIsHuaweiRom())
+        if (RomUtils.checkIsOppoRom() || RomUtils.checkIsVivoRom()
+          || RomUtils.checkIsHuaweiRom() || RomUtils.checkIsSamsunRom()) {
           RomUtils.getAppDetailSettingIntent(context);
-        else {
+        } else if (RomUtils.checkIsMiuiRom() && MiuiUtils.getMiuiVersion() < 9) {
+          MiuiUtils.toPermisstionSetting(context);
+        } else {
           RomUtils.commonROMPermissionApplyInternal(context);
         }
       }

@@ -3,9 +3,12 @@
  */
 package com.allen.android.lib.rom;
 
+import android.annotation.TargetApi;
+import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Binder;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
@@ -117,6 +120,25 @@ public class RomUtils {
 
     public static boolean checkIsVivoRom() {
         return Build.MANUFACTURER.contains("vivo") || Build.MANUFACTURER.contains("VIVO");
+    }
+
+    public static boolean checkIsSamsunRom() {
+        return Build.MANUFACTURER.contains("samsung");
+    }
+
+    /**
+     * 判断小米MIUI系统中授权管理中对应的权限授取
+     *
+     * @return false 存在核心的未收取的权限   true 核心权限已经全部授权
+     */
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    public static boolean hasMiuiPermission(Context context) {
+        AppOpsManager appOpsManager = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
+        int locationOp = appOpsManager.checkOp(AppOpsManager.OPSTR_FINE_LOCATION, Binder.getCallingUid(), context.getPackageName());
+        if (locationOp == AppOpsManager.MODE_IGNORED) {
+            return false;
+        }
+        return true;
     }
 
     public static void commonROMPermissionApplyInternal(Context context) throws NoSuchFieldException, IllegalAccessException {

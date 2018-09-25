@@ -182,12 +182,20 @@ public class MiuiUtils {
             intent.setPackage("com.miui.securitycenter");
             intent.putExtra("extra_pkgname", context.getPackageName());
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            
+
             if (isIntentAvailable(intent, context)) {
                 context.startActivity(intent);
             } else {
                 Log.e(TAG, "Intent is not available!");
             }
         }
+    }
+
+    public static void toPermisstionSetting(Context context) {
+        Intent intent = new Intent("miui.intent.action.APP_PERM_EDITOR");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setClassName("com.miui.securitycenter", "com.miui.permcenter.permissions.PermissionsEditorActivity");
+        intent.putExtra("extra_pkgname", context.getPackageName());
+        context.startActivity(intent);
     }
 }
