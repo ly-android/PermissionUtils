@@ -104,6 +104,4 @@ if (PermissionUtils.hasPermission(this, Manifest.permission.ACCESS_FINE_LOCATION
         }
     }
 ```
-> 参考网站：
-> [Android 6.0动态权限及小米（MIUI）权限的特殊处理](https://blog.csdn.net/lupengfei1009/article/details/78140047)
-> [Android各大手机品牌手机跳转到权限管理界面](https://www.jianshu.com/p/b5c494dba0bc)
+> 参考网站：[Android 6.0动态权限及小米（MIUI）权限的特殊处理](https://blog.csdn.net/lupengfei1009/article/details/78140047) <br/> [Android各大手机品牌手机跳转到权限管理界面](https://www.jianshu.com/p/b5c494dba0bc)
