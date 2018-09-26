@@ -191,11 +191,24 @@ public class MiuiUtils {
         }
     }
 
-    public static void toPermisstionSetting(Context context) {
-        Intent intent = new Intent("miui.intent.action.APP_PERM_EDITOR");
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setClassName("com.miui.securitycenter", "com.miui.permcenter.permissions.PermissionsEditorActivity");
-        intent.putExtra("extra_pkgname", context.getPackageName());
+    public static void toPermisstionSetting(Context context) throws NoSuchFieldException, IllegalAccessException {
+        int rom = getMiuiVersion();
+        Intent intent = null;
+        if (5 == rom) {
+            Uri packageURI = Uri.parse("package:" + context.getApplicationInfo().packageName);
+            intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, packageURI);
+        } else if (rom == 6 || rom == 7) {
+            intent = new Intent("miui.intent.action.APP_PERM_EDITOR");
+            intent.setClassName("com.miui.securitycenter", "com.miui.permcenter.permissions.AppPermissionsEditorActivity");
+            intent.putExtra("extra_pkgname", context.getPackageName());
+        } else if (rom == 8 || rom == 9) {
+            intent = new Intent("miui.intent.action.APP_PERM_EDITOR");
+            intent.setClassName("com.miui.securitycenter", "com.miui.permcenter.permissions.PermissionsEditorActivity");
+            intent.putExtra("extra_pkgname", context.getPackageName());
+        } else {
+            RomUtils.commonROMPermissionApplyInternal(context);
+            return;
+        }
         context.startActivity(intent);
     }
 }
