@@ -104,5 +104,4 @@ if (PermissionUtils.hasPermission(this, Manifest.permission.ACCESS_FINE_LOCATION
         }
     }
 ```
-> 参考网站：[](https://blog.csdn.net/lupengfei1009/article/details/78140047)
-[](https://www.jianshu.com/p/b5c494dba0bc)
+> 参考网站：[](https://blog.csdn.net/lupengfei1009/article/details/78140047),[](https://www.jianshu.com/p/b5c494dba0bc)
