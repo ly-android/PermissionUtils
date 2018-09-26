@@ -12,7 +12,7 @@ allprojects {
 
 ```gradle
 dependencies {
-	        implementation 'com.github.ly-android:PermissionUtils:1.0.1'
+	        implementation 'com.github.ly-android:PermissionUtils:1.0.2'
 	}
 ```
 3. user PermisstionUtils
@@ -37,7 +37,7 @@ if (PermissionUtils.hasPermission(this, Manifest.permission.ACCESS_FINE_LOCATION
 ## android 跳转到权限设置界面
 >我们知道在6.0之后，android的一些权限需要动态获取，网上很多封装好的动态获取权限框架，如[RxPermisstion](https://github.com/tbruyelle/RxPermissions),[PermissionsDispatcher](https://github.com/permissions-dispatcher/PermissionsDispatcher),[easypermissions](https://github.com/googlesamples/easypermissions) 
 
-**如果项目targetSdkVersion<23,使用它们判断是否授权，会出现在设置中关闭权限，还能判断已经授权，由于国产手机都定制了Rom，需要使用原生api来判断,当然也可以用PermissionChecker.checkSelfPermission**
+**如果项目targetSdkVersion<23,使用它们判断是否授权，会出现在设置中关闭权限，还能判断已经授权，由于国产手机都定制了Rom，需要使用原生api来判断,当然也可以用PermissionChecker.checkSelfPermission**,测试发现在vivo,oppo手机上判断权限始终返回已授权
 ```java
 /**
      * 系统层的权限判断
@@ -47,12 +47,16 @@ if (PermissionUtils.hasPermission(this, Manifest.permission.ACCESS_FINE_LOCATION
      * @return 是否有权限 ：其中有一个获取不了就是失败了
      */
     public static boolean hasPermission(@NonNull Context context, @NonNull List<String> permissions) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return true;
+         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return true;
         for (String permission : permissions) {
             String op = AppOpsManagerCompat.permissionToOp(permission);
             if (TextUtils.isEmpty(op)) continue;
-            int result = AppOpsManagerCompat.noteProxyOp(context, op, context.getPackageName());
+            int result = AppOpsManagerCompat.noteOp(context, op, android.os.Process.myUid(), context.getPackageName());
             if (result == AppOpsManagerCompat.MODE_IGNORED) return false;
+            AppOpsManager appOpsManager = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
+            String ops = AppOpsManager.permissionToOp(permission);
+            int locationOp = appOpsManager.checkOp(ops, Binder.getCallingUid(), context.getPackageName());
+            if (locationOp == AppOpsManager.MODE_IGNORED) return false;
             result = ContextCompat.checkSelfPermission(context, permission);
             if (result != PackageManager.PERMISSION_GRANTED) return false;
         }
@@ -81,13 +85,21 @@ if (PermissionUtils.hasPermission(this, Manifest.permission.ACCESS_FINE_LOCATION
                 QikuUtils.applyPermission(context);
             } else if (RomUtils.checkIsOppoRom()) {
                 OppoUtils.applyOppoPermission(context);
+            } else {
+                RomUtils.getAppDetailSettingIntent(context);
             }
-        }
-        if (RomUtils.checkIsMeizuRom()) {
-            MeizuUtils.applyPermission(context);
         } else {
-            if (Build.VERSION.SDK_INT >= 23) {
-                FloatWindowManager.commonROMPermissionApplyInternal(context);
+            if (RomUtils.checkIsMeizuRom()) {
+                MeizuUtils.applyPermission(context);
+            } else {
+                if (RomUtils.checkIsOppoRom() || RomUtils.checkIsVivoRom()
+                        || RomUtils.checkIsHuaweiRom() || RomUtils.checkIsSamsunRom()) {
+                    RomUtils.getAppDetailSettingIntent(context);
+                } else if (RomUtils.checkIsMiuiRom()) {
+                    MiuiUtils.toPermisstionSetting(context);
+                } else {
+                    RomUtils.commonROMPermissionApplyInternal(context);
+                }
             }
         }
     }
