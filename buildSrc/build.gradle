@@ -1,0 +1,21 @@
+apply plugin: 'groovy'
+dependencies {
+    compile gradleApi()//gradle sdk
+    compile localGroovy()//groovy sdk
+    compile "com.android.tools.build:gradle:3.0.0"
+    compile 'org.javassist:javassist:3.21.0-GA'
+}
+repositories {
+    google()
+    jcenter()
+}
+sourceSets {
+    main {
+        groovy {
+            srcDir 'src/main/groovy'
+        }
+        resources {
+            srcDir 'src/main/resources'
+        }
+    }
+}
